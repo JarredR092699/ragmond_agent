@@ -4,7 +4,7 @@ import shutil
 from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
-from langchain_community.document_loaders import Docx2txtLoader, PyPDFLoader
+from langchain_community.document_loaders import Docx2txtLoader, PyPDFLoader, UnstructuredMarkdownLoader
 from langchain_openai import OpenAIEmbeddings
 
 # Load environment variables from the .env file
@@ -15,8 +15,8 @@ def create_chroma_db(
     folder_path: str,
     db_name: str = "./chroma_db",
     delete_chroma_db: bool = True,
-    chunk_size: int = 2000,
-    overlap: int = 500,
+    chunk_size: int = 200,
+    overlap: int = 50,
 ):
     embeddings = OpenAIEmbeddings(api_key=os.environ["OPENAI_API_KEY"])
 
@@ -43,6 +43,8 @@ def create_chroma_db(
             loader = PyPDFLoader(file_path)
         elif filename.endswith(".docx"):
             loader = Docx2txtLoader(file_path)
+        elif filename.endswith(".md"):
+            loader = UnstructuredMarkdownLoader(file_path)
         else:
             continue  # Skip unsupported file types
 
