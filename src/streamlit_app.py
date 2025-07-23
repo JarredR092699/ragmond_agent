@@ -83,7 +83,7 @@ async def main() -> None:
         load_dotenv()
         agent_url = os.getenv("AGENT_URL")
         if not agent_url:
-            host = os.getenv("HOST", "0.0.0.0")
+            host = os.getenv("HOST", "localhost")
             port = os.getenv("PORT", 8080)
             agent_url = f"http://{host}:{port}"
         try:
@@ -191,13 +191,39 @@ async def main() -> None:
             case "research-assistant":
                 WELCOME = "Hello! I'm an AI-powered research assistant with web search and a calculator. Ask me anything!"
             case "rag-assistant":
-                WELCOME = """Hello! I'm Ragmond, an AI-powered chatbot with access to Frequently Asked Questions.
-                I can help you find information about parking, tickets, food, discounts, and more. Ask me anything!"""
+                WELCOME = """Hello! I'm Ragmond, an AI-powered chatbot with access to Frequently Asked Questions.\n        I can help you find information about parking, tickets, food, discounts, and more. Ask me anything!"""
             case _:
                 WELCOME = "Hello! I'm an AI agent. Ask me anything!"
 
         with st.chat_message("ai"):
             st.write(WELCOME)
+
+        # --- Quick Link Demo ---
+        if "show_ticket_links" not in st.session_state:
+            st.session_state.show_ticket_links = False
+        if "quick_link_response" not in st.session_state:
+            st.session_state.quick_link_response = ""
+
+        if st.button("How can I find out about latest Rays ticket offers?"):
+            st.session_state.show_ticket_links = True
+            st.session_state.quick_link_response = ""
+
+        if st.session_state.show_ticket_links:
+            st.markdown("**More ways to get ticket info:**")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("Become a Rays Insider"):
+                    st.session_state.quick_link_response = (
+                        "To become a Rays Insider and get the latest ticket offers, visit the [Rays Insider page](https://www.mlb.com/rays/fans/rays-insider) and sign up for exclusive updates and deals!"
+                    )
+            with col2:
+                if st.button("Download the MLB ballpark app"):
+                    st.session_state.quick_link_response = (
+                        "Download the MLB Ballpark app from the [App Store](https://apps.apple.com/us/app/mlb-ballpark/id471407751) or [Google Play](https://play.google.com/store/apps/details?id=com.bamnetworks.mobile.android.ballpark&hl=en_US&pli=1) to access mobile tickets, offers, and more for Rays games!"
+                    )
+            if st.session_state.quick_link_response:
+                st.info(st.session_state.quick_link_response)
+        # --- End Quick Link Demo ---
 
     # draw_messages() expects an async iterator over messages
     async def amessage_iter() -> AsyncGenerator[ChatMessage, None]:
