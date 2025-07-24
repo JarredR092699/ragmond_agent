@@ -12,7 +12,7 @@ load_dotenv()
 
 
 def create_chroma_db(
-    folder_path: str,
+    folder_path: str = "./C:/Users/ytaketani/Desktop/ragmond_agent/data/ragmond_content.md",
     db_name: str = "./chroma_db",
     delete_chroma_db: bool = True,
     chunk_size: int = 200,
